@@ -1,1 +1,2 @@
-export { applyOperator } from './calculatorEngine';
+export { applyOperator, evaluateOperation } from './calculatorEngine';
+export type { EvaluationResult } from './calculatorEngine';

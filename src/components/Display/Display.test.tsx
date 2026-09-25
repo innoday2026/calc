@@ -13,11 +13,32 @@ describe('Display', () => {
   it('renders the secondary expression above the primary value (FR-007)', () => {
     render(
       <Display
-        displayState={{ primaryValue: '5', secondaryExpression: '2 + 3', isResult: true }}
+        displayState={{
+          primaryValue: '5',
+          secondaryExpression: '2 + 3',
+          isResult: true,
+          isError: false,
+        }}
       />,
     );
     expect(screen.getByTestId('secondary-display')).toHaveTextContent('2 + 3');
     expect(screen.getByTestId('primary-display')).toHaveTextContent('5');
+  });
+
+  it('marks the error message as visually distinct (FR-002, FR-011)', () => {
+    render(
+      <Display
+        displayState={{
+          primaryValue: 'Error',
+          secondaryExpression: '5 / 0',
+          isResult: false,
+          isError: true,
+        }}
+      />,
+    );
+    const primary = screen.getByTestId('primary-display');
+    expect(primary).toHaveTextContent('Error');
+    expect(primary).toHaveAttribute('data-error', 'true');
   });
 
   it('announces updates politely', () => {

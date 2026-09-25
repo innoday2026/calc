@@ -1,5 +1,10 @@
-import { applyOperator } from '@/engine';
-import { INITIAL_DISPLAY_STATE, type DisplayState, type Operator } from './types';
+import { evaluateOperation } from '@/engine';
+import {
+  ERROR_DISPLAY_VALUE,
+  INITIAL_DISPLAY_STATE,
+  type DisplayState,
+  type Operator,
+} from './types';
 
 type Listener = () => void;
 
@@ -20,12 +25,17 @@ export class CalculatorStore {
   };
 
   inputDigit(digit: string): void {
+    if (this.state.isError) {
+      return;
+    }
+
     if (this.state.isResult || this.awaitingOperand) {
       this.awaitingOperand = false;
       this.setState({
         primaryValue: digit,
         secondaryExpression: this.state.isResult ? '' : this.state.secondaryExpression,
         isResult: false,
+        isError: false,
       });
       return;
     }
@@ -39,6 +49,10 @@ export class CalculatorStore {
   }
 
   inputOperator(operator: Operator): void {
+    if (this.state.isError) {
+      return;
+    }
+
     this.pendingOperand = this.state.primaryValue;
     this.pendingOperator = operator;
     this.awaitingOperand = true;
@@ -50,12 +64,12 @@ export class CalculatorStore {
   }
 
   evaluate(): void {
-    if (this.pendingOperand === null || this.pendingOperator === null) {
+    if (this.state.isError || this.pendingOperand === null || this.pendingOperator === null) {
       return;
     }
 
     const expression = `${this.pendingOperand} ${this.pendingOperator} ${this.state.primaryValue}`;
-    const result = applyOperator(
+    const result = evaluateOperation(
       Number(this.pendingOperand),
       this.pendingOperator,
       Number(this.state.primaryValue),
@@ -64,10 +78,22 @@ export class CalculatorStore {
     this.pendingOperand = null;
     this.pendingOperator = null;
     this.awaitingOperand = false;
+
+    if (result.type === 'error') {
+      this.setState({
+        primaryValue: ERROR_DISPLAY_VALUE,
+        secondaryExpression: expression,
+        isResult: false,
+        isError: true,
+      });
+      return;
+    }
+
     this.setState({
-      primaryValue: String(result),
+      primaryValue: String(result.value),
       secondaryExpression: expression,
       isResult: true,
+      isError: false,
     });
   }
 

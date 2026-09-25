@@ -31,8 +31,8 @@ export function Keypad({ store }: KeypadProps) {
           {operator}
         </button>
       ))}
-      <button type="button" aria-label="clear" onClick={() => store.reset()}>
-        C
+      <button type="button" aria-label="all clear" onClick={() => store.reset()}>
+        AC/C
       </button>
       <button type="button" aria-label="equals" onClick={() => store.evaluate()}>
         =
