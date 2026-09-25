@@ -2,29 +2,29 @@
 
 ## 1. Stack
 
-| Technology | Role |
-|---|---|
-| TypeScript 5+ | Primary language; strict mode enforced across all source files |
-| React 18 | UI layer; `useReducer` wires FSM transitions to component re-renders |
-| Vite 5+ | Build tool, dev server, HMR, asset fingerprinting, Rollup production bundling |
-| Rollup (via Vite) | Production tree-shaking, code-splitting, chunk optimisation |
-| `vite-plugin-pwa` / Workbox | Service worker generation, precache manifest, cache-first application shell |
-| `manifest.webmanifest` | PWA installability metadata (name, icons, display, start_url, theme_color) |
-| CSS3 Custom Properties | Design tokens, dark/light theme switching via `data-theme` attribute |
-| CSS Grid + Flexbox | Keypad layout, responsive containers |
-| `clamp()` / `min()` / `max()` | Fluid typography and spacing without media-query breakpoints |
-| Browser Cache API | Service-worker-managed application shell cache |
-| Browser `localStorage` | Optional calculation history persistence (100-entry FIFO cap) |
-| `KeyboardEvent` / `PointerEvent` | Input normalisation into typed `CalcAction` objects |
-| IEEE 754 + `toPrecision` / `toFixed` / `toExponential` | Number formatting strategy; prevents floating-point display artefacts |
-| XState (optional) | FSM visualisation; can be swapped for hand-authored transition table |
-| Vitest | Unit and integration tests for engine, FSM, dispatcher |
-| Playwright | E2E browser tests for UI flows, PWA manifest, SW registration |
-| Testing Library | Component snapshot and interaction tests |
-| axe-core / `jest-axe` | Automated WCAG 2.1 AA accessibility regression in CI |
-| ESLint + TypeScript ESLint | Static analysis; zero-warning policy in CI |
-| Prettier | Code formatting; enforced via pre-commit hook and CI check |
-| pnpm | Package manager; lockfile committed; no npm/yarn allowed |
+| Technology                                             | Role                                                                          |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| TypeScript 5+                                          | Primary language; strict mode enforced across all source files                |
+| React 18                                               | UI layer; `useReducer` wires FSM transitions to component re-renders          |
+| Vite 5+                                                | Build tool, dev server, HMR, asset fingerprinting, Rollup production bundling |
+| Rollup (via Vite)                                      | Production tree-shaking, code-splitting, chunk optimisation                   |
+| `vite-plugin-pwa` / Workbox                            | Service worker generation, precache manifest, cache-first application shell   |
+| `manifest.webmanifest`                                 | PWA installability metadata (name, icons, display, start_url, theme_color)    |
+| CSS3 Custom Properties                                 | Design tokens, dark/light theme switching via `data-theme` attribute          |
+| CSS Grid + Flexbox                                     | Keypad layout, responsive containers                                          |
+| `clamp()` / `min()` / `max()`                          | Fluid typography and spacing without media-query breakpoints                  |
+| Browser Cache API                                      | Service-worker-managed application shell cache                                |
+| Browser `localStorage`                                 | Optional calculation history persistence (100-entry FIFO cap)                 |
+| `KeyboardEvent` / `PointerEvent`                       | Input normalisation into typed `CalcAction` objects                           |
+| IEEE 754 + `toPrecision` / `toFixed` / `toExponential` | Number formatting strategy; prevents floating-point display artefacts         |
+| XState (optional)                                      | FSM visualisation; can be swapped for hand-authored transition table          |
+| Vitest                                                 | Unit and integration tests for engine, FSM, dispatcher                        |
+| Playwright                                             | E2E browser tests for UI flows, PWA manifest, SW registration                 |
+| Testing Library                                        | Component snapshot and interaction tests                                      |
+| axe-core / `jest-axe`                                  | Automated WCAG 2.1 AA accessibility regression in CI                          |
+| ESLint + TypeScript ESLint                             | Static analysis; zero-warning policy in CI                                    |
+| Prettier                                               | Code formatting; enforced via pre-commit hook and CI check                    |
+| pnpm                                                   | Package manager; lockfile committed; no npm/yarn allowed                      |
 
 ---
 
@@ -152,11 +152,13 @@ pwa-calculator/
 The agent **must** follow these steps in order. Do not skip or reorder.
 
 ### Step 1 — Read and Understand Specifications
+
 - Read `AGENTS.md` in full before writing any code.
 - Identify all modules, their responsibilities, and their inter-dependencies from §1 and §2.
 - Note every hard constraint listed in §7.
 
 ### Step 2 — Create `tasks.md`
+
 - Create `tasks.md` in the project root before touching any source file.
 - Structure it as a Markdown checklist with sections mirroring the modules in §2.
 - Each task must be atomic (one file or one clearly scoped behaviour).
@@ -165,16 +167,20 @@ The agent **must** follow these steps in order. Do not skip or reorder.
 
 ```markdown
 # tasks.md
+
 ## Scaffold
+
 - [ ] Initialise pnpm project, install all dependencies
 - [ ] Configure tsconfig.json, vite.config.ts, vitest.config.ts, playwright.config.ts
 - [ ] Configure ESLint, Prettier, .gitignore
 
 ## Engine
+
 - [ ] Implement calculatorEngine.ts pure functions
 - [ ] Write calculatorEngine.test.ts (100% branch coverage)
 
 ## FSM
+
 - [ ] Define types.ts (CalcState, CalcEvent, CalcAction enums/types)
 - [ ] Implement calcFSM.ts transition table
 - [ ] Write calcFSM.test.ts (all valid + invalid transitions)
@@ -182,19 +188,24 @@ The agent **must** follow these steps in order. Do not skip or reorder.
 - [ ] Write calcReducer.test.ts
 
 ## Dispatcher
+
 ...
 
 ## Components
+
 ...
 
 ## E2E
+
 ...
 
 ## CI / Docker
+
 ...
 ```
 
 ### Step 3 — Scaffold and Configure
+
 1. Run `pnpm init` and install all dependencies declared in §1.
 2. Create `tsconfig.json` with `strict: true`, `target: "ES2022"`, `moduleResolution: "bundler"`, `jsx: "react-jsx"`.
 3. Create `tsconfig.node.json` for `vite.config.ts` (Node types, no DOM lib).
@@ -211,6 +222,7 @@ The agent **must** follow these steps in order. Do not skip or reorder.
 8. Configure Prettier. Add `.prettierrc` and a `lint-staged` + `husky` pre-commit hook.
 
 ### Step 4 — Implement in Dependency Order
+
 Implement modules strictly in this order to avoid circular dependencies:
 
 ```
@@ -219,24 +231,28 @@ types.ts → calculatorEngine → numberFormatter → calcFSM → calcReducer
 ```
 
 For each module:
+
 1. Write the TypeScript implementation.
 2. Write its co-located test file immediately after.
 3. Run `pnpm test --run <test-file>` and confirm it passes before moving on.
 4. Mark the corresponding `tasks.md` item `[x]`.
 
 ### Step 5 — Implement Styles
+
 1. Define all design tokens in `src/styles/tokens.css` before writing any component CSS.
 2. Write `reset.css` and `global.css`.
 3. Write `light.css` and `dark.css` theme overrides.
 4. Write CSS Modules for each component; use only Custom Properties from `tokens.css` — no hardcoded colour or spacing values.
 
 ### Step 6 — Implement E2E Tests
+
 1. Write all Playwright specs in `e2e/`.
 2. Run `pnpm exec playwright install --with-deps` to install browsers.
 3. Run `pnpm build && pnpm preview` and verify the app loads before running E2E.
 4. Run `pnpm exec playwright test` and fix failures before proceeding.
 
 ### Step 7 — Validate Everything
+
 Run all of the following and fix every error/warning before declaring done:
 
 ```bash
@@ -244,3 +260,4 @@ pnpm lint              # ESLint — zero warnings allowed
 pnpm format:check      # Prettier — zero diffs allowed
 pnpm test:coverage     # Vitest — must meet 90% lines + branches
 pnpm build             # Vite build — zero errors, zero unresolved imports
+```

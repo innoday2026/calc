@@ -1,0 +1,12 @@
+.app {
+  max-width: 24rem;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+.title {
+  font-size: var(--font-size-secondary);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-bottom: var(--spacing-sm);
+}
