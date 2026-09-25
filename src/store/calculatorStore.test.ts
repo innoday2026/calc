@@ -8,6 +8,7 @@ describe('CalculatorStore', () => {
       primaryValue: '0',
       secondaryExpression: '',
       isResult: false,
+      isError: false,
     });
   });
 
@@ -123,6 +124,107 @@ describe('CalculatorStore', () => {
       primaryValue: '0',
       secondaryExpression: '',
       isResult: false,
+      isError: false,
     });
+  });
+});
+
+describe('CalculatorStore error state', () => {
+  const divideByZero = (store: CalculatorStore): void => {
+    store.inputDigit('5');
+    store.inputOperator('/');
+    store.inputDigit('0');
+    store.evaluate();
+  };
+
+  it('shows "Error" without throwing when dividing by zero (TC-001, TC-002, FR-001, FR-002, FR-003)', () => {
+    const store = new CalculatorStore();
+    expect(() => divideByZero(store)).not.toThrow();
+    expect(store.getDisplayState().primaryValue).toBe('Error');
+    expect(store.getDisplayState().isError).toBe(true);
+    expect(store.getDisplayState().isResult).toBe(false);
+  });
+
+  it('ignores digits while in the error state (TC-003, FR-004)', () => {
+    const store = new CalculatorStore();
+    divideByZero(store);
+    const before = store.getDisplayState();
+    store.inputDigit('7');
+    expect(store.getDisplayState()).toEqual(before);
+  });
+
+  it('ignores operators and equals while in the error state (TC-004, FR-005)', () => {
+    const store = new CalculatorStore();
+    divideByZero(store);
+    const before = store.getDisplayState();
+    store.inputOperator('+');
+    store.evaluate();
+    expect(store.getDisplayState()).toEqual(before);
+  });
+
+  it('resets fully from the error state on clear (TC-005, FR-006, FR-010)', () => {
+    const store = new CalculatorStore();
+    divideByZero(store);
+    store.reset();
+    expect(store.getDisplayState()).toEqual({
+      primaryValue: '0',
+      secondaryExpression: '',
+      isResult: false,
+      isError: false,
+    });
+  });
+
+  it('resets fully from mid-input state on clear (TC-006, FR-007)', () => {
+    const store = new CalculatorStore();
+    store.inputDigit('1');
+    store.inputDigit('2');
+    store.inputOperator('+');
+    store.inputDigit('7');
+    store.reset();
+    expect(store.getDisplayState()).toEqual({
+      primaryValue: '0',
+      secondaryExpression: '',
+      isResult: false,
+      isError: false,
+    });
+    store.evaluate();
+    expect(store.getDisplayState().primaryValue).toBe('0');
+  });
+
+  it('resets fully from the result state on clear (TC-007, FR-008)', () => {
+    const store = new CalculatorStore();
+    store.inputDigit('6');
+    store.inputOperator('*');
+    store.inputDigit('7');
+    store.evaluate();
+    store.reset();
+    expect(store.getDisplayState()).toEqual({
+      primaryValue: '0',
+      secondaryExpression: '',
+      isResult: false,
+      isError: false,
+    });
+  });
+
+  it('accepts input again after clearing the error state (TC-008, FR-009)', () => {
+    const store = new CalculatorStore();
+    divideByZero(store);
+    store.reset();
+    store.inputDigit('3');
+    store.inputOperator('*');
+    store.inputDigit('4');
+    store.evaluate();
+    expect(store.getDisplayState().primaryValue).toBe('12');
+    expect(store.getDisplayState().isError).toBe(false);
+  });
+
+  it('divides normally when the divisor is non-zero', () => {
+    const store = new CalculatorStore();
+    store.inputDigit('9');
+    store.inputOperator('/');
+    store.inputDigit('3');
+    store.evaluate();
+    expect(store.getDisplayState().primaryValue).toBe('3');
+    expect(store.getDisplayState().isError).toBe(false);
   });
 });

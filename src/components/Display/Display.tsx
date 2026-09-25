@@ -12,8 +12,9 @@ export function Display({ displayState }: DisplayProps) {
         {displayState.secondaryExpression}
       </div>
       <output
-        className={styles.primary}
+        className={displayState.isError ? `${styles.primary} ${styles.error}` : styles.primary}
         data-testid="primary-display"
+        data-error={displayState.isError ? 'true' : undefined}
         aria-live="polite"
         aria-atomic="true"
       >

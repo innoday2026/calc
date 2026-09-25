@@ -19,6 +19,10 @@
   text-overflow: ellipsis;
 }
 
+.error {
+  color: var(--color-error);
+}
+
 .primary {
   color: var(--color-text);
   font-size: var(--font-size-primary);

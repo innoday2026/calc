@@ -42,3 +42,60 @@ describe('App display integration', () => {
     expect(elapsed).toBeLessThan(100);
   });
 });
+
+describe('App error state and clear', () => {
+  it('shows "Error" for 5 ÷ 0 and ignores further input until cleared (FR-002, FR-004, FR-005)', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: '/' }));
+    await user.click(screen.getByRole('button', { name: '0' }));
+    await user.click(screen.getByRole('button', { name: 'equals' }));
+
+    const primary = screen.getByTestId('primary-display');
+    expect(primary).toHaveTextContent('Error');
+
+    await user.click(screen.getByRole('button', { name: '9' }));
+    await user.click(screen.getByRole('button', { name: '+' }));
+    await user.click(screen.getByRole('button', { name: 'equals' }));
+    expect(primary).toHaveTextContent('Error');
+  });
+
+  it('recovers from the error state via AC/C and calculates again (FR-006, FR-009)', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole('button', { name: '8' }));
+    await user.click(screen.getByRole('button', { name: '/' }));
+    await user.click(screen.getByRole('button', { name: '0' }));
+    await user.click(screen.getByRole('button', { name: 'equals' }));
+    await user.click(screen.getByRole('button', { name: 'all clear' }));
+
+    expect(screen.getByTestId('primary-display')).toHaveTextContent('0');
+    expect(screen.getByTestId('secondary-display')).toHaveTextContent('');
+
+    await user.click(screen.getByRole('button', { name: '4' }));
+    await user.click(screen.getByRole('button', { name: '+' }));
+    await user.click(screen.getByRole('button', { name: '5' }));
+    await user.click(screen.getByRole('button', { name: 'equals' }));
+    expect(screen.getByTestId('primary-display')).toHaveTextContent('9');
+  });
+
+  it('clears pending operators and operands mid-entry (FR-007, FR-010)', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole('button', { name: '1' }));
+    await user.click(screen.getByRole('button', { name: '2' }));
+    await user.click(screen.getByRole('button', { name: '+' }));
+    await user.click(screen.getByRole('button', { name: '7' }));
+    await user.click(screen.getByRole('button', { name: 'all clear' }));
+
+    expect(screen.getByTestId('primary-display')).toHaveTextContent('0');
+
+    await user.click(screen.getByRole('button', { name: 'equals' }));
+    expect(screen.getByTestId('primary-display')).toHaveTextContent('0');
+    expect(screen.getByTestId('secondary-display')).toHaveTextContent('');
+  });
+});
