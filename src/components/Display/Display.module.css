@@ -1,0 +1,30 @@
+.display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  background: var(--color-display-bg);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.secondary {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-secondary);
+  min-height: 1.2em;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.primary {
+  color: var(--color-text);
+  font-size: var(--font-size-primary);
+  font-variant-numeric: tabular-nums;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

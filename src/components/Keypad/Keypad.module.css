@@ -1,0 +1,21 @@
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.keypad button {
+  padding: clamp(0.75rem, 3vw, 1.25rem);
+  font-size: var(--font-size-key);
+  color: var(--color-text);
+  background: var(--color-key-bg);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.keypad button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

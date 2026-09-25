@@ -1,0 +1,19 @@
+:root {
+  --color-bg: #12141a;
+  --color-display-bg: #1d2029;
+  --color-key-bg: #2a2e3a;
+  --color-text: #f4f5f7;
+  --color-text-muted: #9aa0ae;
+  --color-focus: #6ea8fe;
+
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+
+  --font-size-primary: clamp(2rem, 9vw, 3rem);
+  --font-size-secondary: clamp(0.875rem, 3vw, 1rem);
+  --font-size-key: clamp(1rem, 4vw, 1.25rem);
+}
